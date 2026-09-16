@@ -12,6 +12,8 @@ metadata:
 the work hands over raw output plus the command that produced it; someone who did not do the work decides
 whether that output proves the sentence. Self-review confirms itself; that is why the two roles are separate.
 
+> **Paths.** Commands in this skill start with `${…SKILL_DIR}`: this skill's own folder, the one that contains this SKILL.md. Claude Code fills it in. If your agent shows the placeholder as written (Codex, Cursor, Gemini CLI and others), replace it with that folder's absolute path before you run the command. Left as it is, it expands to nothing and the path breaks.
+
 ## When this applies
 
 - You are about to write "fixed", "tested", "deployed", "verified", "clean" in a report.
