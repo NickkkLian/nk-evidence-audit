@@ -92,7 +92,7 @@ git clone https://github.com/NickkkLian/nk-evidence-audit.git ~/.agents/skills/n
 | OpenAI Codex CLI (0.154.0-alpha.6.2, gpt-5.6-sol, low reasoning, macOS) | yes | Copied into a fresh project's `.agents/skills`, without the user's Codex config. A plain request that never names the skill triggered it: Codex read SKILL.md, ran `scripts/evidence.py` for the claim and for a deliberately failing control, verified both bundles, and gave the verdict wording. |
 | Cursor, Gemini CLI | no | Not tested. Their documentation says both read `~/.agents/skills`, the folder route 4 clones into; Gemini CLI asks before it activates a skill. |
 
-In the nine Codex runs that used the temporary home, every call into the skill folder's scripts/ used that folder's absolute path. Route 4 was checked separately: all ten repositories cloned from GitHub into a temporary home's `~/.agents/skills` were listed by the step 3 command. These skills' frontmatter uses only name, description, license and metadata.
+Route 4 was checked for this repository: cloned from GitHub into a temporary home's `~/.agents/skills`, it was listed by the step 3 command. This skill's frontmatter uses only name, description, license and metadata.
 
 ## Verify
 
