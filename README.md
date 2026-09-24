@@ -25,6 +25,14 @@ The full procedure, the boundaries and where the rules came from are in [SKILL.m
 4. List what you did not test
 5. Hand over
 
+## Why it is built this way
+
+**The idea.** A claim of completion is the thing under review, not evidence for itself. The person or agent who did the work hands over raw output plus the command that produced it; someone who did not do the work decides whether that output proves the sentence.
+
+**Where it came from.** The role split came from a run of incidents where "tested" reports were accepted and later found to rest on a paraphrase, an empty dataset, a hand-typed log with impossible timestamps, or a sentinel whose alert nobody read for three days.
+
+**Evidence.** What was broken on purpose to show that the self-tests can fail is under [Verify](#verify); what was run end to end, and in which agent, is under [Compatibility](#compatibility).
+
 ## Install
 
 Pick one of four ways: three for Claude Code, one for OpenAI Codex. Skills load when a session starts, so open a **new** session after installing.
