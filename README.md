@@ -1,29 +1,66 @@
 # nk-evidence-audit
 
-![nk-evidence-audit](https://raw.githubusercontent.com/NickkkLian/nickkk-skills/main/gallery/social/nk-evidence-audit.png)
-
 An agent skill for [Claude Code](https://code.claude.com) and [OpenAI Codex](https://developers.openai.com/codex). Turn "done, fixed, tested" into evidence a second agent judges.
+
+**What you get.** One real run of nk-evidence-audit 0.1.4, copied from the terminal on 2026-09-30:
+
+```text
+$ python3 scripts/evidence.py run --dir demo --label unit --claim "the check passes" -- python3 -c "print('3 passed')"
+3 passed
+[evidence] demo/20260930-230525-unit  exit=0  0.011s  stdout sha256 7b01e2c3e1d3
+$ python3 scripts/evidence.py verify --dir demo
+  ✔ 20260930-230525-unit  intact 
+✔ 1 bundle, 0 not trustworthy
+$ python3 scripts/evidence.py verify --dir no-such-folder
+✘ no such evidence folder: no-such-folder (nothing was verified)
+```
+
+![nk-evidence-audit](https://raw.githubusercontent.com/NickkkLian/nickkk-skills/main/gallery/social/nk-evidence-audit.png)
 
 Part of [nickkk-skills](https://github.com/NickkkLian/nickkk-skills) — skills that stop an AI coding agent's
 "done, tested, safe" from being taken on faith.
+
+## Try it
+
+Nothing is installed and nothing under `~/.claude` changes: clone, run the self-test, run the example.
+
+```bash
+git clone https://github.com/NickkkLian/nk-evidence-audit && cd nk-evidence-audit
+python3 scripts/evidence.py --selftest
+python3 scripts/evidence.py run --dir demo --label unit --claim "the check passes" -- python3 -c "print('3 passed')"
+python3 scripts/evidence.py verify --dir demo
+python3 scripts/evidence.py verify --dir no-such-folder
+```
+
+The self-test prints:
+
+```text
+evidence.py selftest · 14/14 passed
+```
+
+The last command prints the block at the top of this page; its last line is the one below, and its exit code is 1 (non-zero on purpose: it found something).
+
+```text
+✘ no such evidence folder: no-such-folder (nothing was verified)
+```
 
 ![nk-evidence-audit demo: before and after](https://raw.githubusercontent.com/NickkkLian/nickkk-skills/main/gallery/nk-evidence-audit.gif)
 
 ## What it does
 
-- `scripts/evidence.py run` captures a command's raw stdout/stderr/exit code with the cwd, git head, timestamps and hashes; `index` lists bundles; `verify` flags edited or incomplete ones.
+- The not-evidence table (`references/not-evidence.md`) lists seventeen things that were once accepted as proof and were not. It is the part to read first.
 - The auditor brief (`references/auditor-brief.md`) works as a subagent prompt: three verdicts, no fourth.
-- The not-evidence table lists seventeen things that were once accepted as proof and were not.
+- `scripts/evidence.py run` captures a command's raw stdout/stderr/exit code with the cwd, git head, timestamps and hashes; `index` lists bundles; `verify` flags edited or incomplete ones, and fails on a folder with no bundles. It records and re-runs; it does not detect a hand-typed log by itself.
 
 The full procedure, the boundaries and where the rules came from are in [SKILL.md](SKILL.md).
 
 ## How it works
 
-1. Write the claim as one sentence
-2. Capture, do not transcribe
-3. Include the negative
-4. List what you did not test
-5. Hand over
+1. Write the claim as one sentence that can be false: "the login button opens the modal on mobile", not "UI fixed".
+2. Capture, do not transcribe. Run the proving command through the bundler so the raw output, exit code, working directory, git head and hashes are saved together.
+3. Include the negative. One run that shows the check can fail (an input that must be rejected, a deliberately broken sample).
+4. List what you did not test, in the report, before the verdict is asked for.
+5. Hand over: the claim, the bundle directory (`evidence.py index --dir evidence` prints it), the screenshots, the untested list.
 
 ## Why it is built this way
 
@@ -110,13 +147,19 @@ Route 4 was checked for this repository: cloned from GitHub into a temporary hom
 python3 scripts/evidence.py --selftest
 ```
 
-Standard library only, Python 3.9+. Before publishing, the guarded lines of each script were
-mutated one at a time in a sandbox copy and the self-test was confirmed to go red on the named
-assertion, without a traceback; the unmutated control stayed green.
+Standard library only, Python 3.9+. On 2026-09-30 every self-test above passed, and
+`breakcheck.py` from [nk-breakable-selftest](https://github.com/NickkkLian/nk-breakable-selftest) broke each script on purpose in a sandbox copy:
+
+- `evidence.py`: 6 lines broken one at a time; each turned the self-test red without a traceback.
+
+The unmutated control stayed green every time. Only lines that record a finding, raise, or return a failing exit code
+were broken (the tool's pattern, or the hand-written list); a line number refers to the script as shipped in this version.
+This shows those lines are covered. It does not show that nothing else can fail.
 
 ## Limits
 
 - The bundler records what a command printed; it cannot tell whether the command was the right one.
+- `verify` exits 1 on a folder that is missing or holds no bundle: nothing verified is not a pass (0.1.4; until 0.1.3 it printed a green "0 bundles").
 - `verify` detects edited bundles, not staged ones — a claimer can run a different command. The auditor reads `command.txt` for that reason.
 
 ## License

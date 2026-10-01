@@ -2,7 +2,7 @@
   "name": "nk-evidence-audit",
   "displayName": "nk-evidence-audit",
   "description": "Turn \"done, fixed, tested\" into evidence a second agent judges.",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "author": {
     "name": "Nick Lian",
     "url": "https://github.com/NickkkLian"
